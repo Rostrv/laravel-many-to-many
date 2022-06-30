@@ -8,6 +8,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PostRequest;
 use Illuminate\Support\Str;
 use App\Models\Category;
+use App\Models\Tag;
+use Illuminate\Validation\Rule;
+
 
 
 class PostController extends Controller
@@ -33,7 +36,8 @@ class PostController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('admin.posts.create', compact('categories'));
+        $tags = Tag::all();
+        return view('admin.posts.create', compact('categories','tags'));
     }
 
     /**
@@ -50,7 +54,8 @@ class PostController extends Controller
         $slug = Str::slug($request->title, '-');
         $val_data['slug'] = $slug;
 
-        Post::create($val_data);
+        $new_post=Post::create($val_data);
+        $new_post->tags()->attach($request->tags);
         return redirect()->route('admin.posts.index')->with('message', 'Post created');
     }
 
@@ -75,7 +80,8 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         $categories = Category::all();
-        return view('admin.posts.edit', compact('post', 'categories'));
+        $tags = Tag::all();
+        return view('admin.posts.edit', compact('post', 'categories', 'tags'));
     }
 
     /**
@@ -88,12 +94,20 @@ class PostController extends Controller
     public function update(PostRequest $request, Post $post)
     {
         // ($request->all());
-        $val_data = $request->validated();
+        $val_data = $request->validate([
+            'title'=> ['required', Rule::unique('posts')->ignore($post)],
+            'category_id'=> 'nullable|exists:categories,id',
+            'tags'=>'exists:tags,id',
+            'cover'=> 'nullable',
+            'content'=>'nullable',
+        ]);
 
         $slug = Str::slug($request->title, '-');
         $val_data['slug'] = $slug;
 
         $post->update($val_data);
+
+        $post->tags()->sync($request->tags);
         return redirect()->route('admin.posts.index')->with('message', "$post->title updated");
     }
 

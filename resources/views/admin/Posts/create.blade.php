@@ -24,6 +24,20 @@
     </div>
 
     <div class="form-group">
+        <label for="tags">Tags</label>
+        <select multiple class="form-control" name="tags[]" id="tags">
+            @if($tags)
+                @foreach($tags as $tag)
+                    <option value="{{$tag->id}}">{{$tag->name}}</option>
+                @endforeach
+            @endif
+        </select>
+        </div>
+        @error('tags')
+            <div class="alert alert-danger">{{ $message }}</div>
+        @enderror
+
+    <div class="form-group">
         <label for="cover_image">Image</label>
         <input type="text" class="form-control @error('cover_image') is-invalid @enderror" name="cover_image" id="cover_image" aria-describedby="cover_imageHelper" value="{{old('cover_image')}}" placeholder="insert image url">
         <small id="cove_imageHelper" class="text-muted">Insert image</small>
