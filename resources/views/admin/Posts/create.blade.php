@@ -5,7 +5,7 @@
 <h2>Create a new post</h2>
 @include('partials.errors')
 
-<form action="{{route('admin.posts.store')}}" method="post" >
+<form action="{{route('admin.posts.store')}}" method="post" enctype="multipart/form-data" >
     @csrf
 
     <div class="form-group">
@@ -39,7 +39,7 @@
 
     <div class="form-group">
         <label for="cover_image">Image</label>
-        <input type="text" class="form-control @error('cover_image') is-invalid @enderror" name="cover_image" id="cover_image" aria-describedby="cover_imageHelper" value="{{old('cover_image')}}" placeholder="insert image url">
+        <input type="file" class="form-control @error('cover_image') is-invalid @enderror" name="cover_image" id="cover_image" aria-describedby="cover_imageHelper" placeholder="insert image">
         <small id="cove_imageHelper" class="text-muted">Insert image</small>
     </div>
     <div class="form-group">

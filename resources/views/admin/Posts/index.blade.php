@@ -30,7 +30,7 @@ Lato Admin
             <td>{{$post->title}}</td>
             <td>Category: {{ $post->category ? $post->category->name : 'Uncategorized'}}</td>
             <td>{{$post->slug}}</td>
-            <td><img width ="150px"src="{{$post->cover_image}}" alt="Cover image {{$post->title}}"></td>
+            <td><img width ="150px"src="{{asset('storage/' . $post->cover_image)}}" alt="Cover image {{$post->title}}"></td>
             <td class="d-flex">
               <a class="btn btn-primary" href="{{route('admin.posts.show', $post->id)}}">View</a>
               <a class="btn btn-secondary" href="{{route('admin.posts.edit', $post->id)}}">Edit</a>  

@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use App\Models\Category;
 use App\Models\Tag;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 
 
 
@@ -53,6 +54,28 @@ class PostController extends Controller
         $val_data = $request->validated();
         $slug = Str::slug($request->title, '-');
         $val_data['slug'] = $slug;
+
+        if($request->hasfile('cover_image')){
+
+            //validiamo il file
+
+            $request->validate([
+                'cover_image' => 'nullable|image|max:3000',
+            ]);  
+
+            //salvaggio del file nel filesystem
+
+            //recuperiamo il percorso
+
+            /* ddd($request->all()); */
+            $path = Storage::put('post_images', $request->cover_image);
+
+            /* ddd($path); */
+
+            //passiamo il percorso all'array di dati validati per il salvataggio della risorsa
+            $val_data['cover_image']= $path;
+
+        }
 
         $new_post=Post::create($val_data);
         $new_post->tags()->attach($request->tags);
@@ -104,9 +127,22 @@ class PostController extends Controller
 
         $slug = Str::slug($request->title, '-');
         $val_data['slug'] = $slug;
+        if($request->hasfile('cover_image')){
+            //validiamo il file
+            $request->validate([
+                'cover_image' => 'nullable|image|max:3000',
+            ]);  
+            //salvaggio del file nel filesystem
+            Storage::delete($post->cover_image);
+            //recuperiamo il percorso
+            /* ddd($request->all()); */
+            $path = Storage::put('post_images', $request->cover_image);
+            /* ddd($path); */
+            //passiamo il percorso all'array di dati validati per il salvataggio della risorsa
+            $val_data['cover_image']= $path;
+        }
 
         $post->update($val_data);
-
         $post->tags()->sync($request->tags);
         return redirect()->route('admin.posts.index')->with('message', "$post->title updated");
     }

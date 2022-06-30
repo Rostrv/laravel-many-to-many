@@ -4,7 +4,7 @@
 
 <h2>Edit {{$post->title}}</h2>
 @include('partials.errors')
-<form action="{{route('admin.posts.update', $post->id)}}" method="post" >
+<form action="{{route('admin.posts.update', $post->id)}}" method="post" enctype="multipart/form-data">
     @csrf
 @method('PUT')
     <div class="form-group">
@@ -39,11 +39,11 @@
 
     <div class="d-flex">
         <div class="media">
-            <img width="150px" src="{{$post->cover_image}}" alt="{{$post->title}}">
+            <img width="150px" class="mr-3" src="{{asset('storage/' . $post->cover_image)}}" alt="{{$post->title}}">
         </div>
         <div class="form-group">
-            <label for="cover_image">Image</label>
-            <input type="text" class="form-control @error('cover_image') is-invalid @enderror" name="cover_image" id="cover_image" aria-describedby="cover_imageHelper" value="{{old('cover_image', $post->cover_image)}}" placeholder="insert image url">
+            <label for="cover_image">replace image</label>
+            <input type="text" class="form-control @error('cover_image') is-invalid @enderror" name="cover_image" id="cover_image" aria-describedby="cover_imageHelper" placeholder="insert image url">
             <small id="cove_imageHelper" class="text-muted">Insert image</small>
         </div>
     </div>
