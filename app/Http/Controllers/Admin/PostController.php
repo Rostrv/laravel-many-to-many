@@ -11,7 +11,10 @@ use App\Models\Category;
 use App\Models\Tag;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
-
+use App\Mail\NewPostCreated;
+use App\Mail\PostUpdatedAdminMessage;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
 
 
 class PostController extends Controller
@@ -25,6 +28,8 @@ class PostController extends Controller
     {
 
         $posts = Post::orderByDesc('id')->get();
+        $categories= Category::all();
+        $tags= Tag::all();
         /* $categories = Category::all(); */
         return view('admin.posts.index', compact('posts'));
     }
@@ -55,6 +60,8 @@ class PostController extends Controller
         $slug = Str::slug($request->title, '-');
         $val_data['slug'] = $slug;
 
+        $val_data['user_id'] = Auth::id();
+
         if($request->hasfile('cover_image')){
 
             //validiamo il file
@@ -79,6 +86,9 @@ class PostController extends Controller
 
         $new_post=Post::create($val_data);
         $new_post->tags()->attach($request->tags);
+        
+        Mail::to('account@mail.com')->send(new NewPostCreated($new_post));
+
         return redirect()->route('admin.posts.index')->with('message', 'Post created');
     }
 
@@ -144,6 +154,10 @@ class PostController extends Controller
 
         $post->update($val_data);
         $post->tags()->sync($request->tags);
+
+       // return(new PostUpdatedAdminMessage($post))->render();
+       Mail::to('admin@boolpress.it')->send(new PostUpdatedAdminMessage($post));
+
         return redirect()->route('admin.posts.index')->with('message', "$post->title updated");
     }
 

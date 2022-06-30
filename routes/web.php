@@ -1,7 +1,9 @@
 <?php
 
+use App\Mail\PostUpdatedAdminMessage;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Post;
 
 
 /*
@@ -32,6 +34,12 @@ Route::middleware('auth')->prefix('admin')->namespace('Admin')->name('admin.')->
     ])->except(['show', 'create', 'edit']);
 
 });
+
+/* Route::get('mailable', function(){
+    $post = Post::findorfail(1);
+
+    return new PostUpdatedAdminMessage($post);
+}); */
 
 
 
